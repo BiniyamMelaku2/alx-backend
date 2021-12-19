@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""The function return a tuple of size two i.e. pagination parameters"""
+"""Server class to paginate a database of popular baby names"""
 
 import csv
 import math
