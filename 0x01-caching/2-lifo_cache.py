@@ -23,14 +23,13 @@ class LIFOCache(BaseCaching):
         """
         if key and item:
             if len(self.cache_data) < BaseCaching.MAX_ITEMS:
-                self.cache_data[key] = item               
+                self.cache_data[key] = item
             else:
                 keys = list(self.cache_data.keys())
                 print("DISCARD: {}".format(keys[-1]))
                 del self.cache_data[keys[-1]]
-                self.cache_data[key] = item 
-                                
-                
+                self.cache_data[key] = item
+
     def get(self, key):
         """return value in self.cache_data linked to key
         """
