@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-""" FIFOCache that inherits from BaseCaching and is a caching system
+""" LIFOCache that inherits from BaseCaching and is a caching system
 """
 
 
