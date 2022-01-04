@@ -1,11 +1,11 @@
 #!/usr/bin/python3
-""" a script that starts a Flask web application """
+""" a script that starts a Flask application """
 from flask import Flask, render_template
-app = Flask(__name__)
+app = Flask(__name__, static_url_path='')
 
 
-@app.route('/', strict_slashes=False)
-def hello():
+@app.route('/', methods=['GET'], strict_slashes=False)
+def hello() -> str:
     ''' returns a simple page '''
     return render_template('0-index.html')
 
