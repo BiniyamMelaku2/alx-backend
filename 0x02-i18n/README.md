@@ -6,6 +6,7 @@ Read or watch:
 * [Flask-Babel](https://flask-babel.tkte.ch/)
 * [Flask i18n tutorial](https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-xiii-i18n-and-l10n)
 * [pytz](http://pytz.sourceforge.net/)
+* [Translating Your Web App Via Flask-Babel](https://medium.datadriveninvestor.com/translating-your-web-app-via-flask-babel-a1561376256c)
 
 # Tasks
 
@@ -68,13 +69,13 @@ Visiting `http://127.0.0.1:5000/?locale=fr` should display this level 1 heading:
 
 ## [5. Mock logging in](./5-app.py), [5-index.html](templates/5-index.html)
 
-Creating a user login system is outside the scope of this project. To emulate a similar behavior, copy the following user table in 5-app.py.
+Creating a user login system is outside the scope of this project. To emulate a similar behavior, copy the following user table in `5-app.py`.
 
-This will mock a database user table. Logging in will be mocked by passing login_as URL parameter containing the user ID to log in as.
+This will mock a database user table. Logging in will be mocked by passing `login_as` URL parameter containing the user ID to log in as.
 
-Define a get_user function that returns a user dictionary or None if the ID cannot be found or if login_as was not passed.
+Define a `get_user` function that returns a user dictionary or None if the ID cannot be found or if `login_as` was not passed.
 
-Define a before_request function and use the app.before_request decorator to make it be executed before all other functions. before_request should use get_user to find a user if any, and set it as a global on flask.g.user.
+Define a `before_request` function and use the `app.before_request` decorator to make it be executed before all other functions. `before_request` should use `get_user` to find a user if any, and set it as a global on `flask.g.user`.
 
 In your HTML template, if a user is logged in, in a paragraph tag, display a welcome message otherwise display a default message as shown in the table below.
 ```
@@ -84,4 +85,36 @@ not_logged_in	"You are not logged in."	"Vous n'êtes pas connecté."
 ```
 Visiting `http://127.0.0.1:5000/` in your browser should display this:
 
-## []()
+## [6. Use user locale](./6-app.py), [6-index.html](templates/6-index.html)
+Change your `get_locale` function to use a user’s preferred local if it is supported.
+
+The order of priority should be
+
+1. Locale from URL parameters
+2. Locale from user settings
+3. Locale from request header
+4.Default locale
+
+Test by logging in as different users
+
+## [7. Infer appropriate time zone](./7-app.py), [7-index.html](templates/7-index.html)
+Define a `get_timezone` function and use the `babel.timezoneselector` decorator.
+
+The logic should be the same as `get_locale`:
+
+1. Find timezone parameter in URL parameters
+2. Find time zone from user settings
+3. Default to UTC
+
+Before returning a URL-provided or user time zone, you must validate that it is a valid time zone. To that, use `pytz.timezone` and catch the `pytz.exceptions.UnknownTimeZoneError` exception.
+
+## [8. Display the current time]()
+Based on the inferred time zone, display the current time on the home page in the default format. For example:
+
+Jan 21, 2020, 5:55:39 AM or 21 janv. 2020 à 05:56:28
+
+Use the following translations
+```
+msgid	      English	                          French
+current_time_is "The current time is %(current_time)s." "Nous sommes le %          (current_time)s."
+```
