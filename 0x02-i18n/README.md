@@ -25,3 +25,63 @@ In order to configure available languages in our app, you will create a `Config`
 Use `Config` to set Babel’s default locale (`"en"`) and timezone (`"UTC"`).
 
 Use that class as config for your Flask app.
+
+## [2. Get locale from request](./2-app.py), [2-index.html](templates/2-index.html)
+Create a `get_locale` function with the `babel.localeselector` decorator. Use `request.accept_languages` to determine the best match with our supported languages.
+
+## [3. Parametrize templates](./3-app.py), [3-index.html](templates/3-index.html)
+[enmessages.po](translations/en/LC_MESSAGES/messages.po), [frmessages.po](translations/fr/LC_MESSAGES/messages.po), 
+[enmessages.mo](translations/en/LC_MESSAGES/messages.mo), [frmessages.mo](translations/fr/LC_MESSAGES/messages.mo)
+
+Use the _ or gettext function to parametrize your templates. Use the message IDs home_title and home_header.
+
+Create a `babel.cfg` file containing
+Then initialize your translations with
+
+`$ pybabel extract -F babel.cfg -o messages.pot` .
+and your two dictionaries with
+```
+$ pybabel init -i messages.pot -d translations -l en
+$ pybabel init -i messages.pot -d translations -l fr
+```
+Then edit files `translations/[en|fr]/LC_MESSAGES/messages.po` to provide the correct value for each message ID for each language. Use the following translations:
+```
+msgid	           English	                     French
+home_title	"Welcome to Holberton"	"Bienvenue chez Holberton"
+home_header	"Hello world!"	          "Bonjour monde!"
+```
+
+Then compile your dictionaries with
+
+`$ pybabel compile -d translations`
+
+Reload the home page of your app and make sure that the correct messages show up.
+
+## [4. Force locale with URL parameter](./4-app.py), [4-index.html](templates/4-index.html)
+implement a way to force a particular locale by passing the `locale=fr` parameter to your app’s URLs.
+
+In your `get_locale` function, detect if the incoming request contains `locale` argument and ifs value is a supported locale, return it. If not or if the parameter is not present, resort to the previous default behavior.
+
+Now you should be able to test different translations by visiting `http://127.0.0.1:5000?locale=[fr|en]`.
+
+Visiting `http://127.0.0.1:5000/?locale=fr` should display this level 1 heading:
+
+## [5. Mock logging in](./5-app.py), [5-index.html](templates/5-index.html)
+
+Creating a user login system is outside the scope of this project. To emulate a similar behavior, copy the following user table in 5-app.py.
+
+This will mock a database user table. Logging in will be mocked by passing login_as URL parameter containing the user ID to log in as.
+
+Define a get_user function that returns a user dictionary or None if the ID cannot be found or if login_as was not passed.
+
+Define a before_request function and use the app.before_request decorator to make it be executed before all other functions. before_request should use get_user to find a user if any, and set it as a global on flask.g.user.
+
+In your HTML template, if a user is logged in, in a paragraph tag, display a welcome message otherwise display a default message as shown in the table below.
+```
+msgid	          English	                              French
+logged_in_as	"You are logged in as %	"Vous êtes connecté en tant que % %                   (username)s."               (username)s."
+not_logged_in	"You are not logged in."	"Vous n'êtes pas connecté."
+```
+Visiting `http://127.0.0.1:5000/` in your browser should display this:
+
+## []()
