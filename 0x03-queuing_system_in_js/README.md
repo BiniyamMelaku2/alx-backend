@@ -11,9 +11,9 @@ Read or watch:
 
 
 ## Required Files for the Project
-[package.json](./)
+[package.json](./package.json)
 
-[.babelrc](./)
+[.babelrc](./.babelrc)
 
 ### and…
 > run $ `npm install` when you have the package.json
