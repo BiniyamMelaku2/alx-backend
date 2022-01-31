@@ -19,7 +19,9 @@ Read or watch:
 > run $ `npm install` when you have the package.json
 
 # Tasks
-[0. Install a redis instance](./dump.rdb), [README.md](./README.md)
+
+## [0. Install a redis instance](./dump.rdb), [README.md](./README.md)
+
 Download, extract, and compile the latest stable Redis version (higher than 5.0.7 - [https://redis.io/download](https://redis.io/download)):
 ```
 $ wget http://download.redis.io/releases/redis-6.0.10.tar.gz
