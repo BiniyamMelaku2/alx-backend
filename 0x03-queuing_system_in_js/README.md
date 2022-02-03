@@ -227,13 +227,6 @@ In a file named `5-publisher.js`, create a redis client:
      -  The function should publish to the channel holberton school channel, the message    
         passed in argument after the time passed in arguments
 ```
-At the end of the file, call:
-```
-publishMessage("Holberton Student #1 starts course", 100);
-publishMessage("Holberton Student #2 starts course", 200);
-publishMessage("KILL_SERVER", 300);
-publishMessage("Holberton Student #3 starts course", 400);
-```
 ##### Requirements:
 * You only need one Redis server to execute the program
 * You will need to have two node processes to run each script at the same time
@@ -346,5 +339,4 @@ And in the same time in Terminal 2:
 Sending notification to 4153518780, with message: This is the code to verify your account
 ```
 
-BOOM! same as `5-subscriber.js` and `5-publisher.js` but with a module to manage jobs.
 
