@@ -260,9 +260,7 @@ About to send KILL_SERVER
 About to send Holberton Student #3 starts course
 ^C
 ``` 
-
 ##### And in the same time in Terminal 1:
-
 ```
 Redis client connected to the server
 Holberton Student #1 starts course
@@ -272,7 +270,6 @@ KILL_SERVER
 ^C
 ``` 
 Now you have a basic Redis-based queuing system where you have a process to generate job and a second one to process it. These 2 processes can be in 2 different servers, which we also call “background workers”.
-
 
 ## [6. Create the Job creator](./6-job_creator.js)
 * Create a queue with `Kue`
@@ -339,4 +336,159 @@ And in the same time in Terminal 2:
 Sending notification to 4153518780, with message: This is the code to verify your account
 ```
 
+## [8. Track progress and errors with Kue: Create the Job creator](./7-job_creator.js)
+Create an array jobs with the data inside:
+After this array created:
+* Create a queue with `Kue`
+* Write a loop that will go through the array `jobs` and for each object:
+```
+   o Create a new job to the queue `push_notification_code_2` with the current object
+   o If there is no error, log to the console `Notification job created: JOB_ID`
+   o On the job completion, log to the console `Notification job JOB_ID completed`
+   o On the job failure, log to the console `Notification job JOB_ID failed: ERROR`
+   o On the job progress, log to the console `Notification job JOB_ID PERCENTAGE% complete`
+```
+Terminal 1:
+```
+bob@dylan:~$ npm run dev 7-job_creator.js 
+> queuing_system_in_js@1.0.0 dev /root
+> nodemon --exec babel-node --presets @babel/preset-env "7-job_creator.js"
+[nodemon] 2.0.4
+[nodemon] to restart at any time, enter `rs`
+[nodemon] watching path(s): *.*
+[nodemon] watching extensions: js,mjs,json
+[nodemon] starting `babel-node --presets @babel/preset-env 7-job_creator.js`
+Notification job created: 39
+Notification job created: 40
+Notification job created: 41
+Notification job created: 42
+Notification job created: 43
+Notification job created: 44
+Notification job created: 45
+Notification job created: 46
+Notification job created: 47
+Notification job created: 48
+Notification job created: 49
+```
 
+## [9. Track progress and errors with Kue: Create the Job processor](./7-job_processor.js)
+Create an array that will contain the blacklisted phone numbers. Add in it `4153518780` and `4153518781` - these 2 numbers will be blacklisted by our jobs processor.
+
+Create a function `sendNotification` that takes 4 arguments: `phoneNumber`, `message`, `job`, and `done`:
+
+* When the function is called, track the progress of the `job` of `0` out of `100`
+* If `phoneNumber` is included in the “blacklisted array”, fail the job with an `Error` object and the message: `Phone number PHONE_NUMBER is blacklisted`
+* Otherwise:
+```
+   o Track the progress to 50%
+   o Log to the console `Sending notification to PHONE_NUMBER, with message: MESSAGE`
+```
+Create a queue with `Kue` that will proceed job of the queue `push_notification_code_2` with two jobs at a time.
+
+##### Requirements:
+* You only need one Redis server to execute the program
+* You will need to have two node processes to run each script at the same time
+* You muse use `Kue` to set up the queue
+* Executing the jobs list should log to the console the following:
+
+Terminal 2:
+```
+bob@dylan:~$ npm run dev 7-job_processor.js 
+> queuing_system_in_js@1.0.0 dev /root
+> nodemon --exec babel-node --presets @babel/preset-env "7-job_processor.js"
+[nodemon] 2.0.4
+[nodemon] to restart at any time, enter `rs`
+[nodemon] watching path(s): *.*
+[nodemon] watching extensions: js,mjs,json
+[nodemon] starting `babel-node --presets @babel/preset-env 7-job_processor.js`
+Sending notification to 4153518743, with message: This is the code 4321 to verify your account
+Sending notification to 4153538781, with message: This is the code 4562 to verify your account
+Sending notification to 4153118782, with message: This is the code 4321 to verify your account
+Sending notification to 4153718781, with message: This is the code 4562 to verify your account
+Sending notification to 4159518782, with message: This is the code 4321 to verify your account
+Sending notification to 4158718781, with message: This is the code 4562 to verify your account
+Sending notification to 4153818782, with message: This is the code 4321 to verify your account
+Sending notification to 4154318781, with message: This is the code 4562 to verify your account
+Sending notification to 4151218782, with message: This is the code 4321 to verify your account
+```
+##### And in the same time in terminal 1:
+```
+...
+Notification job #39 0% complete
+Notification job #40 0% complete
+Notification job #39 failed: Phone number 4153518780 is blacklisted
+Notification job #40 failed: Phone number 4153518781 is blacklisted
+Notification job #41 0% complete
+Notification job #41 50% complete
+Notification job #42 0% complete
+Notification job #42 50% complete
+Notification job #41 completed
+Notification job #42 completed
+Notification job #43 0% complete
+Notification job #43 50% complete
+Notification job #44 0% complete
+Notification job #44 50% complete
+Notification job #43 completed
+Notification job #44 completed
+Notification job #45 0% complete
+Notification job #45 50% complete
+Notification job #46 0% complete
+Notification job #46 50% complete
+Notification job #45 completed
+Notification job #46 completed
+Notification job #47 0% complete
+Notification job #47 50% complete
+Notification job #48 0% complete
+Notification job #48 50% complete
+Notification job #47 completed
+Notification job #48 completed
+Notification job #49 0% complete
+Notification job #49 50% complete
+Notification job #49 completed
+```
+
+## [10. Writing the job creation function](./8-job.js)
+create a function named `createPushNotificationsJobs:`
+* It takes into argument `jobs` (array of objects), and `queue` (`Kue` queue)
+* If `jobs` is not an array, it should throw an `Error` with message: `Jobs is not an array`
+* For each job in `jobs`, create a job in the queue `push_notification_code_3`
+* When a job is created, it should log to the console `Notification job created: JOB_ID`
+* When a job is complete, it should log to the console `Notification job JOB_ID completed`
+* When a job is failed, it should log to the console `Notification job JOB_ID failed: ERROR`
+* When a job is making progress, it should log to the console `Notification job JOB_ID PERCENT% complete`
+```
+bob@dylan:~$ npm run dev 8-job-main.js 
+> queuing_system_in_js@1.0.0 dev /root
+> nodemon --exec babel-node --presets @babel/preset-env "8-job-main.js"
+[nodemon] 2.0.4
+[nodemon] to restart at any time, enter `rs`
+[nodemon] watching path(s): *.*
+[nodemon] watching extensions: js,mjs,json
+[nodemon] starting `babel-node --presets @babel/preset-env 8-job-main.js`
+Notification job created: 51
+```
+
+## [11. Writing the test for job creation](./8-job.test.js)
+Now that you created a job creator, let’s add tests:
+* Import the function `createPushNotificationsJobs`
+* Create a queue with `Kue`
+* Write a test suite for the `createPushNotificationsJobs` function:
+```
+    o Use queue.testMode to validate which jobs are inside the queue
+    o etc.
+```
+##### Requirements:
+* Make sure to enter the test mode without processing the jobs before executing the tests
+* Make sure to clear the queue and exit the test mode after executing the tests
+```
+bob@dylan:~$ npm test 8-job.test.js 
+> queuing_system_in_js@1.0.0 test /root
+> mocha --require @babel/register --exit "8-job.test.js"
+  createPushNotificationsJobs
+    ✓ display a error message if jobs is not an array
+Notification job created: 1
+Notification job created: 2
+    ✓ create two new jobs to the queue
+...
+  123 passing (417ms)
+```
